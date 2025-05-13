@@ -1,26 +1,8 @@
 import axios from 'axios';
-import {
-  USER_LOGIN_REQUEST,
-  USER_LOGIN_SUCCESS,
-  USER_LOGIN_FAIL,
-  USER_LOGOUT,
-  USER_REGISTER_REQUEST,
-  USER_REGISTER_SUCCESS,
-  USER_REGISTER_FAIL,
-  USER_DETAILS_REQUEST,
-  USER_DETAILS_SUCCESS,
-  USER_DETAILS_FAIL,
-  USER_UPDATE_PROFILE_REQUEST,
-  USER_UPDATE_PROFILE_SUCCESS,
-  USER_UPDATE_PROFILE_FAIL,
-} from '../constants/userConstants';
 
-// Login - Authentification de l'utilisateur
 export const login = (email, password) => async (dispatch) => {
   try {
-    dispatch({
-      type: USER_LOGIN_REQUEST,
-    });
+    dispatch({ type: 'USER_LOGIN_REQUEST' });
 
     const config = {
       headers: {
@@ -35,14 +17,14 @@ export const login = (email, password) => async (dispatch) => {
     );
 
     dispatch({
-      type: USER_LOGIN_SUCCESS,
+      type: 'USER_LOGIN_SUCCESS',
       payload: data,
     });
 
     localStorage.setItem('userInfo', JSON.stringify(data));
   } catch (error) {
     dispatch({
-      type: USER_LOGIN_FAIL,
+      type: 'USER_LOGIN_FAIL',
       payload:
         error.response && error.response.data.message
           ? error.response.data.message
@@ -51,17 +33,15 @@ export const login = (email, password) => async (dispatch) => {
   }
 };
 
-// Logout - Déconnexion de l'utilisateur
 export const logout = () => (dispatch) => {
   localStorage.removeItem('userInfo');
-  dispatch({ type: USER_LOGOUT });
+  dispatch({ type: 'USER_LOGOUT' });
 };
 
-// Register - Création d'un compte utilisateur
 export const register = (username, email, password) => async (dispatch) => {
   try {
     dispatch({
-      type: USER_REGISTER_REQUEST,
+      type: 'USER_REGISTER_REQUEST',
     });
 
     const config = {
@@ -77,98 +57,19 @@ export const register = (username, email, password) => async (dispatch) => {
     );
 
     dispatch({
-      type: USER_REGISTER_SUCCESS,
+      type: 'USER_REGISTER_SUCCESS',
       payload: data,
     });
 
-    // Connexion automatique après l'inscription
     dispatch({
-      type: USER_LOGIN_SUCCESS,
-      payload: data,
-    });
-
-    localStorage.setItem('userInfo', JSON.stringify(data));
-  } catch (error) {
-    dispatch({
-      type: USER_REGISTER_FAIL,
-      payload:
-        error.response && error.response.data.message
-          ? error.response.data.message
-          : error.message,
-    });
-  }
-};
-
-// Obtenir les détails de l'utilisateur
-export const getUserDetails = () => async (dispatch, getState) => {
-  try {
-    dispatch({
-      type: USER_DETAILS_REQUEST,
-    });
-
-    const {
-      userLogin: { userInfo },
-    } = getState();
-
-    const config = {
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${userInfo.token}`,
-      },
-    };
-
-    const { data } = await axios.get(`/api/users/profile`, config);
-
-    dispatch({
-      type: USER_DETAILS_SUCCESS,
-      payload: data,
-    });
-  } catch (error) {
-    dispatch({
-      type: USER_DETAILS_FAIL,
-      payload:
-        error.response && error.response.data.message
-          ? error.response.data.message
-          : error.message,
-    });
-  }
-};
-
-// Mettre à jour le profil utilisateur
-export const updateUserProfile = (user) => async (dispatch, getState) => {
-  try {
-    dispatch({
-      type: USER_UPDATE_PROFILE_REQUEST,
-    });
-
-    const {
-      userLogin: { userInfo },
-    } = getState();
-
-    const config = {
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${userInfo.token}`,
-      },
-    };
-
-    const { data } = await axios.put(`/api/users/profile`, user, config);
-
-    dispatch({
-      type: USER_UPDATE_PROFILE_SUCCESS,
-      payload: data,
-    });
-
-    // Mettre à jour les informations de connexion
-    dispatch({
-      type: USER_LOGIN_SUCCESS,
+      type: 'USER_LOGIN_SUCCESS',
       payload: data,
     });
 
     localStorage.setItem('userInfo', JSON.stringify(data));
   } catch (error) {
     dispatch({
-      type: USER_UPDATE_PROFILE_FAIL,
+      type: 'USER_REGISTER_FAIL',
       payload:
         error.response && error.response.data.message
           ? error.response.data.message

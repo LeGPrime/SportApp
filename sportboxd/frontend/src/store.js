@@ -1,28 +1,16 @@
-import { createStore, combineReducers, applyMiddleware } from 'redux';
-import thunk from 'redux-thunk';
-import { composeWithDevTools } from 'redux-devtools-extension';
-
-// Reducers
-import { userLoginReducer, userRegisterReducer, userDetailsReducer, userUpdateProfileReducer } from './reducers/userReducers';
-import { matchListReducer, matchDetailsReducer, matchTopRatedReducer } from './reducers/matchReducers';
-import { reviewCreateReducer, reviewListReducer, reviewDetailsReducer, reviewUpdateReducer, reviewDeleteReducer } from './reducers/reviewReducers';
+import { createStore, combineReducers, applyMiddleware, compose } from 'redux';
+import { thunk } from 'redux-thunk';
+import { userLoginReducer, userRegisterReducer } from './reducers/userReducers';
+import { matchListReducer, matchDetailsReducer } from './reducers/matchReducers';
 
 const reducer = combineReducers({
   userLogin: userLoginReducer,
   userRegister: userRegisterReducer,
-  userDetails: userDetailsReducer,
-  userUpdateProfile: userUpdateProfileReducer,
   matchList: matchListReducer,
   matchDetails: matchDetailsReducer,
-  matchTopRated: matchTopRatedReducer,
-  reviewCreate: reviewCreateReducer,
-  reviewList: reviewListReducer,
-  reviewDetails: reviewDetailsReducer,
-  reviewUpdate: reviewUpdateReducer,
-  reviewDelete: reviewDeleteReducer,
 });
 
-// Charger l'utilisateur depuis le localStorage
+// Charge les infos utilisateur du localStorage
 const userInfoFromStorage = localStorage.getItem('userInfo')
   ? JSON.parse(localStorage.getItem('userInfo'))
   : null;
@@ -32,11 +20,12 @@ const initialState = {
 };
 
 const middleware = [thunk];
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
 const store = createStore(
   reducer,
   initialState,
-  composeWithDevTools(applyMiddleware(...middleware))
+  composeEnhancers(applyMiddleware(...middleware))
 );
 
 export default store;
