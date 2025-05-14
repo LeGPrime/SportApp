@@ -1,5 +1,5 @@
 import { createStore, combineReducers, applyMiddleware, compose } from 'redux';
-import { thunk } from 'redux-thunk';
+import thunk from 'redux-thunk';
 import { userLoginReducer, userRegisterReducer } from './reducers/userReducers';
 import { matchListReducer, matchDetailsReducer } from './reducers/matchReducers';
 

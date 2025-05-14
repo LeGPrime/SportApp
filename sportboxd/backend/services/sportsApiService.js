@@ -214,4 +214,57 @@ const saveMatchesToDatabase = async (matches) => {
       });
 
       if (existingMatch) {
-        //
+        //// Mettre à jour le match existant avec les nouvelles données
+        Object.assign(existingMatch, matchData);
+        await existingMatch.save();
+      } else {
+        // Créer un nouveau match
+        const newMatch = new Match(matchData);
+        await newMatch.save();
+      }
+    }
+    
+    console.log(`${matches.length} matchs sauvegardés dans la base de données.`);
+  } catch (error) {
+    console.error('Erreur lors de la sauvegarde des matchs:', error);
+    throw error;
+  }
+};
+
+// Fonction principale pour récupérer et sauvegarder les matchs
+const updateMatches = async (date = new Date().toISOString().split('T')[0]) => {
+  try {
+    console.log(`Mise à jour des matchs pour la date: ${date}`);
+    
+    // Récupérer les matchs de différents sports
+    const footballMatches = await fetchFootballMatches(date);
+    console.log(`${footballMatches.length} matchs de football récupérés.`);
+    
+    // Sauvegarder les matchs dans la base de données
+    await saveMatchesToDatabase(footballMatches);
+    
+    // Tu peux ajouter les autres sports quand tu auras les API keys
+    // const basketballMatches = await fetchBasketballMatches(date);
+    // await saveMatchesToDatabase(basketballMatches);
+    
+    // const tennisMatches = await fetchTennisMatches(date);
+    // await saveMatchesToDatabase(tennisMatches);
+    
+    return {
+      football: footballMatches.length,
+      // basketball: basketballMatches.length,
+      // tennis: tennisMatches.length
+    };
+  } catch (error) {
+    console.error('Erreur lors de la mise à jour des matchs:', error);
+    throw error;
+  }
+};
+
+module.exports = {
+  fetchFootballMatches,
+  fetchBasketballMatches,
+  fetchTennisMatches,
+  saveMatchesToDatabase,
+  updateMatches
+};
